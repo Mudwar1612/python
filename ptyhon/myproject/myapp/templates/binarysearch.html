@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Binary Search</title>
+        {% load static %}
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+        <link rel="stylesheet" href="{% static 'css/style3.css' %}">
+    </head>
+    <body>
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'images/ombak.png' %}" alt="ombak" width="80" height="80">
+                <h2>Kelompok6</h2>
+            </div>
+            <ul class="sidebar-links">
+                <h4><span>Main Menu</span></h4>
+                <div class="menu-separator"></div>
+                <li><a href="{% url 'start' %}"><span class="material-symbols-outlined">H</span>Home</a></li>
+                <li><a href="{% url 'sequentialsearch' %}"><span class="material-symbols-outlined">S</span>Sequential Search</a></li>
+                <li><a href="{% url 'binarysearch' %}"><span class="material-symbols-outlined">B</span>Binary Search</a></li>
+                <h4><span>General</span></h4>
+                <div class="menu-separator"></div>
+                <li><a href="{% url 'group' %}"><span class="material-symbols-outlined">groups</span>Groups</a></li>
+            </ul>
+        </aside>
+        <div class="content">
+            <div class="card">
+                <h3>Pencari Data</h3>
+                <p>Disini Anda dapat mencari data dan memberi hasil dari yang anda cari.</p>
+                <form method="post" action="{% url 'binarysearch' %}">
+                    {% csrf_token %}
+                    <input type="text" name="search_data" placeholder="Masukkan data untuk mencari">
+                    <button type="submit">Cari</button>
+                </form>
+                {% if result %}
+                    {% if result.indices %}
+                        {% for index in result.indices %}
+                            <p>Data '{{ result.search_data }}' ditemukan di indeks: {{ index }}</p>
+                        {% endfor %}
+                    {% else %}
+                        <p>Data '{{ result.search_data }}' tidak ditemukan</p>
+                    {% endif %}
+                {% elif search_data %}
+                    <p>Data '{{ search_data }}' tidak ditemukan</p>
+                {% endif %}
+            </div>
+            <div class="card">
+                <h3>Pusat Data</h3>
+                <p>Disini memungkinkan Anda untuk menyimpan dan menghapus data.</p>
+                <form method="post" action="{% url 'save_data' %}">
+                    {% csrf_token %}
+                    <input type="text" name="new_data" placeholder="Masukkan data baru">
+                    <button type="submit">Simpan</button>
+                </form>
+                <div class="saved-data">
+                    <h4>Data Tersimpan:</h4>
+                    <ul>
+                        {% for entry in data_store %}
+                            <li>
+                                <span>{{ entry.data }}</span>
+                                <form method="post" action="{% url 'delete_data' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="data_to_delete" value="{{ entry.data }}">
+                                    <button type="submit" class="delete-btn">x</button>
+                                </form>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% block content %}
+        {% endblock %}
+    </body>
+</html>
